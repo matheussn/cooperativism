@@ -13,7 +13,6 @@ import com.example.cooperativism.agenda.service.AgendaService
 import com.example.cooperativism.agenda.service.converters.toEntity
 import com.example.cooperativism.agenda.service.converters.toResponse
 import com.example.cooperativism.exceptions.NotFoundException
-import com.example.cooperativism.session.repository.SessionRepository
 import com.example.cooperativism.session.service.SessionService
 import com.example.cooperativism.vote.service.ResultResponse
 import com.example.cooperativism.vote.service.VoteService
@@ -26,7 +25,6 @@ import java.util.*
 class AgendaServiceImpl(
     private val agendaRepository: AgendaRepository,
     private val voteService: VoteService,
-    private val sessionRepository: SessionRepository,
     private val sessionService: SessionService
 ) : AgendaService {
     companion object {
@@ -47,8 +45,12 @@ class AgendaServiceImpl(
 
     override fun computeVote(agendaId: String, request: ComputeVoteRequest): ComputeVoteResponse {
         log.info("[AGENDA] Computando voto para pauta $agendaId Request $request")
-        return sessionService.validSessionToVote(agendaId)
-            .let { voteService.computeVoteToSession(agendaId, request) }
+
+        return getAgendaById(agendaId)
+            .let { agenda ->
+                sessionService.validSessionToVote(agenda.id)
+                    .let { voteService.computeVoteToSession(agenda.id, request) }
+            }
     }
 
     override fun computeResult(agendaId: String): ResultResponse {

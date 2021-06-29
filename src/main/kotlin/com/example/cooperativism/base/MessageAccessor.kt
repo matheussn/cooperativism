@@ -14,9 +14,8 @@ class MessageAccessor(
         return try {
             buildMessage(code, params)
                 .let {
-                    if (it == code) {
+                    if (it == code)
                         return buildMessage(CooperativismMessage.UNEXPECTED_ERROR)
-                    }
                     return it
                 }
         } catch (e: NoSuchMessageException) {

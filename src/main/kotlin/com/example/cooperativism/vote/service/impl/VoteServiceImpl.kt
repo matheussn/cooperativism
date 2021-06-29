@@ -11,12 +11,12 @@ import com.example.cooperativism.vote.repository.VoteRepository
 import com.example.cooperativism.vote.service.ResultEnum
 import com.example.cooperativism.vote.service.ResultResponse
 import com.example.cooperativism.vote.service.VoteService
+import com.example.cooperativism.vote.service.converters.toEntity
+import com.example.cooperativism.vote.service.converters.toResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger
-import java.sql.Timestamp
-import java.time.Instant
 import java.util.*
 
 @Service
@@ -56,24 +56,13 @@ class VoteServiceImpl(
             }
     }
 
-    private fun validateVote(vote: Vote?, agendaId: String) {
-        if (vote != null)
+    private fun validateVote(vote: Optional<Vote>, agendaId: String) {
+        vote.ifPresent {
             throw BusinessException(
                 CooperativismMessage.USER_HAS_ALREADY_VOTED_FOR_THIS_AGENDA,
-                listOf(vote.cpf, agendaId)
+                listOf(it.cpf, agendaId)
             )
+        }
         log.info("[VOTE] O Usuário ainda não votou nesta pauta")
     }
-
-    private fun ComputeVoteRequest.toEntity(agendaId: String) =
-        Vote(
-            id = UUID.randomUUID().toString(),
-            createdAt = Timestamp.from(Instant.now()),
-            cpf = this.cpf,
-            vote = this.vote,
-            agendaId = agendaId
-        )
-
-    private fun Vote.toResponse() =
-        ComputeVoteResponse(cpf = this.cpf, vote = this.vote, agendaId = this.agendaId)
 }

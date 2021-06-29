@@ -36,8 +36,9 @@ class BaseExceptionHandler(
     }
 
     private fun buildResponse(ex: BaseException, status: HttpStatus): ResponseEntity<ErrorsDetails> {
-        log.error("[EXCEPTION-HANDLER] Erro Mapeado: ${ex.message} Status Http: $status")
-        return ResponseEntity(ErrorsDetails(Date(), ex.message, getMessage(ex.message, ex.params)), status)
+        val realMessage = getMessage(ex.message, ex.params)
+        log.error("[EXCEPTION-HANDLER] Erro Mapeado: ${ex.message} Status Http: $status | Mensagem do erro $realMessage")
+        return ResponseEntity(ErrorsDetails(Date(), ex.message, realMessage), status)
     }
 
     private fun getMessage(code: String?, params: List<Any> = emptyList()) = messageAccessor.getMessage(code, params)

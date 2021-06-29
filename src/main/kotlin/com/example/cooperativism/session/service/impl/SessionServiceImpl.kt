@@ -3,7 +3,6 @@ package com.example.cooperativism.session.service.impl
 import com.example.cooperativism.CooperativismMessage
 import com.example.cooperativism.agenda.controller.request.CreateSessionRequest
 import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
-import com.example.cooperativism.agenda.service.impl.AgendaServiceImpl
 import com.example.cooperativism.exceptions.BusinessException
 import com.example.cooperativism.session.Session
 import com.example.cooperativism.session.repository.SessionRepository
@@ -29,10 +28,8 @@ class SessionServiceImpl(
         log.info("[SESSION] Criando sessão para a pauta $agendaId Request $request")
         sessionRepository.findByAgendaId(agendaId)
             .let {
-                if (it.isPresent) {
-                    log.error("[SESSION] Já existe uma sessão para a pauta: $agendaId")
-                    throw BusinessException(CooperativismMessage.AGENDA_ALREADY_HAVE_A_SESSION)
-                }
+                if (it.isPresent)
+                    throw BusinessException(CooperativismMessage.AGENDA_ALREADY_HAVE_A_SESSION, listOf(agendaId))
             }
 
         val session = request.toEntity(agendaId)
@@ -49,11 +46,10 @@ class SessionServiceImpl(
     private fun validateIfSessionIsAbleToVote(session: Optional<Session>) {
         if (session.isEmpty)
             throw BusinessException(CooperativismMessage.AGENDA_DOES_NOT_HAVE_A_VOTING_SESSION)
-        session.get()
-            .let {
-                if (it.endsAt < Timestamp.from(Instant.now()))
-                    throw BusinessException(CooperativismMessage.SESSION_HAS_ALREADY_ENDED, listOf(it.endsAt))
-            }
+        session.ifPresent {
+            if (it.endsAt < Timestamp.from(Instant.now()))
+                throw BusinessException(CooperativismMessage.SESSION_HAS_ALREADY_ENDED, listOf(it.endsAt))
+        }
         log.info("[SESSION] Validação finalizada. Sessão está hábil para receber votos")
     }
 }

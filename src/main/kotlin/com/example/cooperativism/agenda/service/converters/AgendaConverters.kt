@@ -3,10 +3,8 @@ package com.example.cooperativism.agenda.service.converters
 import com.example.cooperativism.agenda.Agenda
 import com.example.cooperativism.agenda.controller.request.CreateAgendaRequest
 import com.example.cooperativism.agenda.controller.response.CreateAgendaResponse
-import java.math.BigInteger
 import java.sql.Timestamp
 import java.time.Instant
-import java.time.LocalDateTime
 import java.util.*
 
 internal fun Agenda.toResponse() =

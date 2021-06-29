@@ -1,0 +1,71 @@
+= Cooperativism Application
+:revnumber: {version}
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:toc-title: Table of contents
+:sectlinks:
+
+[[http-verbs]]
+== HTTP Methods
+
+The allowed methods are:
+
+|===
+| Method | Description
+
+| `GET`
+| Used to get information about a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PUT`
+| Used to update an existing resource
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+
+[[http-status]]
+== HTTP Codes
+
+The HTTP codes supported are:
+
+|===
+| Code | Description
+
+| `200 OK`
+| The request was executed with success
+
+| `201 Created`
+| The new resource was created with success
+
+| `204 No Content`
+| No additional information
+
+| `400 Bad Request`
+| Bad Request.
+Check the response to know detailed information about the error
+
+| `401 Unauthorized`
+| The authorization data is invalid
+
+| `403 Forbidden`
+| The credentials don't have enough privileges to access the resource
+
+| `404 Not Found`
+| The requested resource was not found
+|===
+
+== Resources - V1
+
+include::{snippets}/agenda-controller-doc-test/doc-create-agenda/auto-section.adoc[]
+
+include::{snippets}/agenda-controller-doc-test/doc-create-session/auto-section.adoc[]
+
+include::{snippets}/agenda-controller-doc-test/doc-create-vote/auto-section.adoc[]
+
+include::{snippets}/agenda-controller-doc-test/doc-get-result/auto-section.adoc[]
