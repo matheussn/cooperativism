@@ -44,7 +44,9 @@ class VoteServiceImpl(
             .let { results ->
                 log.info("[VOTE] Resultado encontrado $results")
                 val noVote: BigInteger = results.find { it.vote == VoteEnum.NAO }?.total ?: BigInteger.ZERO
-                val yesVote = results.find { it.vote == VoteEnum.SIM }?.total ?: BigInteger.ZERO
+                log.info("[VOTE] Quantidade de votos 'NAO': $noVote")
+                val yesVote: BigInteger = results.find { it.vote == VoteEnum.SIM }?.total ?: BigInteger.ZERO
+                log.info("[VOTE] Quantidade de votos 'SIM': $yesVote")
                 ResultResponse(
                     agendaId = agendaId,
                     votes = mapOf(
@@ -54,6 +56,7 @@ class VoteServiceImpl(
                     result = if (yesVote > noVote) ResultEnum.APROVADO else ResultEnum.REPROVADO
                 )
             }
+            .also { log.info("[VOTE] Resultado computado para $agendaId é: $it") }
     }
 
     private fun validateVote(vote: Optional<Vote>, agendaId: String) {
