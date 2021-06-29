@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="2021_06_27_16_45_vote_refactor" author="matheus">
+        <dropColumn tableName="vote" columnName="session_id"/>
+        <addColumn tableName="vote">
+            <column name="agenda_id" type="VARCHAR(255)">
+                <constraints foreignKeyName="vote_agenda_id_fk" referencedTableName="agenda"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="2021_06_27_16_45_session_refactor" author="matheus">
+        <dropColumn tableName="session" columnName="name"/>
+        <dropColumn tableName="session" columnName="description"/>
+        <addColumn tableName="session">
+            <column name="agenda_id" type="VARCHAR(255)">
+                <constraints foreignKeyName="session_agenda_id_fk" referencedTableName="agenda"
+                             referencedColumnNames="id"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

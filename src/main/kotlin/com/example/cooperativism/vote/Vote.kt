@@ -1,17 +1,20 @@
 package com.example.cooperativism.vote
 
+import java.sql.Timestamp
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.Id
 
 @Entity
 data class Vote(
     @Id
     val id: String,
-    val sessionId: String,
+    val agendaId: String,
     val cpf: String,
-    val vote: VoteEnum
+    @Enumerated(EnumType.STRING)
+    val vote: VoteEnum,
+    val createdAt: Timestamp
 )
 
-enum class VoteEnum {
-    SIM, NAO
-}
+enum class VoteEnum { SIM, NAO }

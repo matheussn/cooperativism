@@ -1,11 +1,8 @@
 package com.example.cooperativism.session.service
 
-import com.example.cooperativism.session.controller.representation.ComputeVoteRequest
-import com.example.cooperativism.session.controller.representation.CreateSessionRequest
-import com.example.cooperativism.session.controller.representation.CreateSessionResponse
+import com.example.cooperativism.agenda.controller.request.CreateSessionRequest
+import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
 
 interface SessionService {
-    fun createSession(request: CreateSessionRequest): CreateSessionResponse
-
-    fun computeVote(sessionId: String, request: ComputeVoteRequest)
+    fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse
 }

@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface VoteRepository : JpaRepository<Vote, String>
+interface VoteRepository : JpaRepository<Vote, String> {
+    fun findByCpfAndAgendaId(cpf: String, agendaId: String): Vote?
+}

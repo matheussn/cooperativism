@@ -1,12 +1,11 @@
-package com.example.cooperativism.session.controller.representation
+package com.example.cooperativism.agenda.controller.response
 
 import java.math.BigInteger
 import java.sql.Timestamp
 
 data class CreateSessionResponse(
     val id: String,
-    val name: String,
-    val description: String,
+    val agendaId: String,
     val duration: BigInteger,
     val endsAt: Timestamp
 )

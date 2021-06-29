@@ -2,16 +2,14 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="2021_06_16_17_00" author="matheus">
-        <createTable tableName="session">
+    <changeSet id="2021_06_27_16_45" author="matheus">
+        <createTable tableName="agenda">
             <column name="id" type="VARCHAR(255)">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="description" type="TEXT"/>
             <column name="created_at" type="TIMESTAMP"/>
-            <column name="duration" type="INTEGER"/>
-            <column name="ends_at" type="TIMESTAMP"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

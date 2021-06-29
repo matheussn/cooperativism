@@ -9,9 +9,8 @@ import javax.persistence.Id
 data class Session(
     @Id
     val id: String,
-    val name: String,
-    val description: String,
     val createdAt: Timestamp,
     val endsAt: Timestamp,
-    val duration: BigInteger
+    val duration: BigInteger,
+    val agendaId: String,
 )
