@@ -10,8 +10,8 @@ import javax.persistence.Id
 @Entity
 data class VoteResult(
     @Id
-    val id: String,
     @Enumerated(EnumType.STRING)
     val vote: VoteEnum,
+    val id: String,
     val total: BigInteger
 )
