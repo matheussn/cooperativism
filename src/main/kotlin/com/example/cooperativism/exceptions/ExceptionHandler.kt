@@ -13,26 +13,8 @@ import java.util.function.Consumer
 
 @ControllerAdvice
 class ExceptionHandler {
-    @ExceptionHandler(value = [SessionToVoteNotFound::class])
-    fun handlerNotfoundSessionToVote(ex: SessionToVoteNotFound): ResponseEntity<ErrorsDetails> {
-        val errorDetails = ErrorsDetails(Date(), ex.detail)
-        return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
-    }
-
-    @ExceptionHandler(value = [SessionHasAlreadyEnded::class])
-    fun handlerSessionHasAlreadyEnded(ex: SessionHasAlreadyEnded): ResponseEntity<ErrorsDetails> {
-        val errorDetails = ErrorsDetails(Date(), ex.detail)
-        return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
-    }
-
-    @ExceptionHandler(value = [VoteForThisSessionAlreadyComputed::class])
-    fun handlerSessionHasAlreadyEnded(ex: VoteForThisSessionAlreadyComputed): ResponseEntity<ErrorsDetails> {
-        val errorDetails = ErrorsDetails(Date(), ex.detail)
-        return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
-    }
-
-    @ExceptionHandler(value = [AgendaWithoutSession::class])
-    fun handlerAgendaWithoutSession(ex: AgendaWithoutSession): ResponseEntity<ErrorsDetails> {
+    @ExceptionHandler(value = [BusinessException::class])
+    fun businessExceptionHandler(ex: BusinessException): ResponseEntity<ErrorsDetails> {
         val errorDetails = ErrorsDetails(Date(), ex.detail)
         return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
     }

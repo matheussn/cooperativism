@@ -7,18 +7,6 @@ data class ErrorsDetails(
     val details: String
 )
 
-data class SessionToVoteNotFound(
-    val detail: String
-) : Exception()
-
-data class SessionHasAlreadyEnded(
-    val detail: String
-) : Exception()
-
-data class VoteForThisSessionAlreadyComputed(
-    val detail: String
-) : Exception()
-
-data class AgendaWithoutSession(
+data class BusinessException(
     val detail: String
 ) : Exception()

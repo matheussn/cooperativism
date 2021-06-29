@@ -7,11 +7,14 @@ import com.example.cooperativism.agenda.controller.response.ComputeVoteResponse
 import com.example.cooperativism.agenda.controller.response.CreateAgendaResponse
 import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
 import com.example.cooperativism.agenda.service.AgendaService
+import com.example.cooperativism.vote.service.ResultResponse
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
@@ -20,16 +23,19 @@ import javax.validation.Valid
 class AgendaController(
     private val agendaService: AgendaService
 ) {
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     fun createAgenda(@RequestBody request: CreateAgendaRequest): CreateAgendaResponse {
         return agendaService.createAgenda(request)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("{agendaId}/vote")
     fun vote(@PathVariable agendaId: String, @Valid @RequestBody request: ComputeVoteRequest): ComputeVoteResponse {
         return agendaService.computeVote(agendaId, request)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("{agendaId}/session")
     fun createSession(
         @PathVariable agendaId: String,
@@ -39,7 +45,7 @@ class AgendaController(
     }
 
     @GetMapping("{agendaId}/result")
-    fun result(@PathVariable agendaId: String) {
+    fun result(@PathVariable agendaId: String): ResultResponse {
         return agendaService.computeResult(agendaId)
     }
 }

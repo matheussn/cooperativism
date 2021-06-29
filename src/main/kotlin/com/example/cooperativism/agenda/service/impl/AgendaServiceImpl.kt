@@ -10,18 +10,17 @@ import com.example.cooperativism.agenda.repository.AgendaRepository
 import com.example.cooperativism.agenda.service.AgendaService
 import com.example.cooperativism.agenda.service.converters.toEntity
 import com.example.cooperativism.agenda.service.converters.toResponse
-import com.example.cooperativism.exceptions.AgendaWithoutSession
-import com.example.cooperativism.exceptions.SessionHasAlreadyEnded
-import com.example.cooperativism.exceptions.SessionToVoteNotFound
 import com.example.cooperativism.session.Session
 import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
+import com.example.cooperativism.exceptions.BusinessException
 import com.example.cooperativism.session.repository.SessionRepository
 import com.example.cooperativism.session.service.SessionService
+import com.example.cooperativism.vote.service.ResultResponse
 import com.example.cooperativism.vote.service.VoteService
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
+import java.util.Optional
 
 @Service
 class AgendaServiceImpl(
@@ -45,11 +44,9 @@ class AgendaServiceImpl(
             .let { voteService.computeVoteToSession(agendaId, request) }
     }
 
-    override fun computeResult(agendaId: String) {
-        getAgendaById(agendaId)
-//            .also(::validateIfSessionIsAbleToComputeResult)
-
-        TODO("Not yet implemented")
+    override fun computeResult(agendaId: String): ResultResponse {
+        return getAgendaById(agendaId)
+            .let { voteService.getResult(it.id) }
     }
 
     private fun getAgendaById(agendaId: String): Agenda =
@@ -59,16 +56,16 @@ class AgendaServiceImpl(
 
     private fun validIfExists(agenda: Optional<Agenda>) {
         if (agenda.isEmpty)
-            throw SessionToVoteNotFound("Pauta não encontrada")
+            throw BusinessException("Pauta não encontrada")
     }
 
     private fun validateIfSessionIsAbleToVote(session: Optional<Session>) {
         if (session.isEmpty)
-            throw AgendaWithoutSession("A agenda ainda não possui uma sessão de votos criada")
+            throw BusinessException("A agenda ainda não possui uma sessão de votos criada")
         session.get()
             .let {
                 if (it.endsAt < Timestamp.from(Instant.now()))
-                    throw SessionHasAlreadyEnded("A sessão finalizou às ${it.endsAt}")
+                    throw BusinessException("A sessão finalizou às ${it.endsAt}")
             }
     }
 }

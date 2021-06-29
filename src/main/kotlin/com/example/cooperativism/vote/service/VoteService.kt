@@ -5,4 +5,6 @@ import com.example.cooperativism.agenda.controller.response.ComputeVoteResponse
 
 interface VoteService {
     fun computeVoteToSession(agendaId: String, vote: ComputeVoteRequest): ComputeVoteResponse
+
+    fun getResult(agendaId: String): ResultResponse
 }
