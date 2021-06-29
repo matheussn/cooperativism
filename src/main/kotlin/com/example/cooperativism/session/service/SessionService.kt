@@ -5,4 +5,6 @@ import com.example.cooperativism.agenda.controller.response.CreateSessionRespons
 
 interface SessionService {
     fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse
+
+    fun validSessionToVote(agendaId: String)
 }

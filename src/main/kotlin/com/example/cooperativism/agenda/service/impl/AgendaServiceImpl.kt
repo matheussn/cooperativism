@@ -1,26 +1,26 @@
 package com.example.cooperativism.agenda.service.impl
 
+import com.example.cooperativism.CooperativismMessage
 import com.example.cooperativism.agenda.Agenda
 import com.example.cooperativism.agenda.controller.request.ComputeVoteRequest
 import com.example.cooperativism.agenda.controller.request.CreateAgendaRequest
 import com.example.cooperativism.agenda.controller.request.CreateSessionRequest
 import com.example.cooperativism.agenda.controller.response.ComputeVoteResponse
 import com.example.cooperativism.agenda.controller.response.CreateAgendaResponse
+import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
 import com.example.cooperativism.agenda.repository.AgendaRepository
 import com.example.cooperativism.agenda.service.AgendaService
 import com.example.cooperativism.agenda.service.converters.toEntity
 import com.example.cooperativism.agenda.service.converters.toResponse
-import com.example.cooperativism.session.Session
-import com.example.cooperativism.agenda.controller.response.CreateSessionResponse
-import com.example.cooperativism.exceptions.BusinessException
+import com.example.cooperativism.exceptions.NotFoundException
 import com.example.cooperativism.session.repository.SessionRepository
 import com.example.cooperativism.session.service.SessionService
 import com.example.cooperativism.vote.service.ResultResponse
 import com.example.cooperativism.vote.service.VoteService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.sql.Timestamp
-import java.time.Instant
-import java.util.Optional
+import java.util.*
 
 @Service
 class AgendaServiceImpl(
@@ -29,22 +29,30 @@ class AgendaServiceImpl(
     private val sessionRepository: SessionRepository,
     private val sessionService: SessionService
 ) : AgendaService {
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(AgendaServiceImpl::class.java)
+    }
+
     override fun createAgenda(request: CreateAgendaRequest): CreateAgendaResponse {
-        return agendaRepository.save(request.toEntity()).toResponse()
+        val agenda = request.toEntity()
+        log.info("[AGENDA] Pauta a ser criada $agenda")
+        return agendaRepository.save(agenda).toResponse()
     }
 
     override fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse {
+        log.info("[AGENDA] Iniciando criação de sessão para a pauta $agendaId")
         return getAgendaById(agendaId)
             .let { sessionService.createSession(it.id, request) }
     }
 
     override fun computeVote(agendaId: String, request: ComputeVoteRequest): ComputeVoteResponse {
-        return sessionRepository.findByAgendaId(agendaId)
-            .also(::validateIfSessionIsAbleToVote)
+        log.info("[AGENDA] Computando voto para pauta $agendaId Request $request")
+        return sessionService.validSessionToVote(agendaId)
             .let { voteService.computeVoteToSession(agendaId, request) }
     }
 
     override fun computeResult(agendaId: String): ResultResponse {
+        log.info("[AGENDA] Computando resultado da pauta $agendaId")
         return getAgendaById(agendaId)
             .let { voteService.getResult(it.id) }
     }
@@ -53,19 +61,10 @@ class AgendaServiceImpl(
         agendaRepository.findById(agendaId)
             .also(::validIfExists)
             .get()
+            .also { log.info("[AGENDA] Pauta encontrada: $it") }
 
     private fun validIfExists(agenda: Optional<Agenda>) {
         if (agenda.isEmpty)
-            throw BusinessException("Pauta não encontrada")
-    }
-
-    private fun validateIfSessionIsAbleToVote(session: Optional<Session>) {
-        if (session.isEmpty)
-            throw BusinessException("A agenda ainda não possui uma sessão de votos criada")
-        session.get()
-            .let {
-                if (it.endsAt < Timestamp.from(Instant.now()))
-                    throw BusinessException("A sessão finalizou às ${it.endsAt}")
-            }
+            throw NotFoundException(CooperativismMessage.AGENDA_NOT_FOUND)
     }
 }
