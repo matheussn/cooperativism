@@ -17,12 +17,12 @@ internal fun Session.toResponse() =
         endsAt = this.endsAt
     )
 
-internal fun CreateSessionRequest.toEntity(agendaId: String) =
+internal fun CreateSessionRequest?.toEntity(agendaId: String): Session =
     Session(
         id = UUID.randomUUID().toString(),
         createdAt = Timestamp.from(Instant.now()),
-        endsAt = getEndTime(this.duration),
-        duration = duration ?: BigInteger.ONE,
+        endsAt = getEndTime(this?.duration),
+        duration = this?.duration ?: BigInteger.ONE,
         agendaId = agendaId
     )
 

@@ -40,7 +40,7 @@ class AgendaServiceImpl(
         return agendaRepository.save(agenda).toResponse()
     }
 
-    override fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse {
+    override fun createSession(agendaId: String, request: CreateSessionRequest?): CreateSessionResponse {
         log.info("[AGENDA] Iniciando criação de sessão para a pauta $agendaId")
         return getAgendaById(agendaId)
             .let { sessionService.createSession(it.id, request) }

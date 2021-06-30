@@ -10,7 +10,7 @@ import com.example.cooperativism.vote.service.ResultResponse
 
 interface AgendaService {
     fun createAgenda(request: CreateAgendaRequest): CreateAgendaResponse
-    fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse
+    fun createSession(agendaId: String, request: CreateSessionRequest?): CreateSessionResponse
     fun computeVote(agendaId: String, request: ComputeVoteRequest): ComputeVoteResponse
     fun computeResult(agendaId: String): ResultResponse
 }

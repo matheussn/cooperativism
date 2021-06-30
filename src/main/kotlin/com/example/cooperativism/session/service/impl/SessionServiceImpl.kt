@@ -24,7 +24,7 @@ class SessionServiceImpl(
         private val log: Logger = LoggerFactory.getLogger(SessionServiceImpl::class.java)
     }
 
-    override fun createSession(agendaId: String, request: CreateSessionRequest): CreateSessionResponse {
+    override fun createSession(agendaId: String, request: CreateSessionRequest?): CreateSessionResponse {
         log.info("[SESSION] Criando sessão para a pauta $agendaId Request $request")
         sessionRepository.findByAgendaId(agendaId)
             .let {

@@ -33,14 +33,17 @@ class AgendaController(
     @PostMapping("{agendaId}/session")
     fun createSession(
         @PathVariable agendaId: String,
-        @RequestBody request: CreateSessionRequest
+        @Valid @RequestBody(required = false) request: CreateSessionRequest?
     ): CreateSessionResponse {
         return agendaService.createSession(agendaId, request)
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("{agendaId}/vote")
-    fun computeVote(@PathVariable agendaId: String, @Valid @RequestBody request: ComputeVoteRequest): ComputeVoteResponse {
+    fun computeVote(
+        @PathVariable agendaId: String,
+        @Valid @RequestBody request: ComputeVoteRequest
+    ): ComputeVoteResponse {
         return agendaService.computeVote(agendaId, request)
     }
 
