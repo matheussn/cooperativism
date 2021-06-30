@@ -9,8 +9,11 @@ import com.example.cooperativism.agenda.controller.response.CreateSessionRespons
 import com.example.cooperativism.agenda.repository.AgendaRepository
 import com.example.cooperativism.agenda.service.converters.toEntity
 import com.example.cooperativism.agenda.service.converters.toResponse
+import com.example.cooperativism.exceptions.BusinessException
 import com.example.cooperativism.exceptions.NotFoundException
 import com.example.cooperativism.session.service.SessionService
+import com.example.cooperativism.validcpf.ValidCpfResource
+import com.example.cooperativism.validcpf.ValidCpfResponse
 import com.example.cooperativism.vote.VoteEnum
 import com.example.cooperativism.vote.service.ResultEnum
 import com.example.cooperativism.vote.service.ResultResponse
@@ -33,12 +36,14 @@ internal class AgendaServiceImplTest {
     private val agendaRepository: AgendaRepository = mock()
     private val sessionService: SessionService = mock()
     private val voteService: VoteService = mock()
+    private val validCpfResource: ValidCpfResource = mock()
 
 
     private val agendaService = AgendaServiceImpl(
         agendaRepository = agendaRepository,
         sessionService = sessionService,
-        voteService = voteService
+        voteService = voteService,
+        validCpfResource = validCpfResource
     )
 
     @Test
@@ -111,6 +116,9 @@ internal class AgendaServiceImplTest {
             createdAt = Timestamp.from(Instant.now())
         )
         whenever(agendaRepository.findById(any())).thenReturn(Optional.of(agenda))
+        whenever(validCpfResource.validCpf(request.cpf)).thenReturn(
+            ValidCpfResponse(cpf = request.cpf, isValid = true)
+        )
 
         val result = agendaService.computeVote(agendaId, request)
 
@@ -148,5 +156,16 @@ internal class AgendaServiceImplTest {
         val result = agendaService.computeResult(agendaId)
 
         assert(result === expectedResult)
+    }
+
+    @Test
+    fun `should throw an exception when cpf is not valid`() {
+        val agendaId = UUID.randomUUID().toString()
+        val request = ComputeVoteRequest(cpf = "12611324671", vote = VoteEnum.SIM)
+        whenever(validCpfResource.validCpf(request.cpf)).thenReturn(
+            ValidCpfResponse(cpf = request.cpf, isValid = false)
+        )
+
+        assertThrows<BusinessException> { agendaService.computeVote(agendaId, request) }
     }
 }

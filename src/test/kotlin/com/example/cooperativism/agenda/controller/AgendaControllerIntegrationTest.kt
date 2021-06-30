@@ -8,14 +8,18 @@ import com.example.cooperativism.agenda.controller.request.CreateSessionRequest
 import com.example.cooperativism.agenda.repository.AgendaRepository
 import com.example.cooperativism.exceptions.ErrorsDetails
 import com.example.cooperativism.session.repository.SessionRepository
+import com.example.cooperativism.validcpf.ValidCpfResource
+import com.example.cooperativism.validcpf.ValidCpfResponse
 import com.example.cooperativism.vote.VoteEnum
 import com.example.cooperativism.vote.repository.VoteRepository
 import com.example.cooperativism.vote.service.ResultEnum
 import com.example.cooperativism.vote.service.ResultResponse
 import com.google.gson.Gson
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -36,17 +40,28 @@ internal class AgendaControllerIntegrationTest : BaseTest() {
     @Autowired
     private lateinit var voteRepository: VoteRepository
 
+    @MockBean
+    private lateinit var validCpfResource: ValidCpfResource
+
     private val gson: Gson = Gson()
+
+    companion object {
+        const val validCpf = "12611324670"
+    }
 
     @BeforeEach
     fun init() {
         voteRepository.deleteAllInBatch()
         sessionRepository.deleteAllInBatch()
         agendaRepository.deleteAllInBatch()
+        whenever(validCpfResource.validCpf(validCpf)).thenReturn(
+            ValidCpfResponse(cpf = validCpf, isValid = true)
+        )
     }
 
     @Test
     fun shouldPassThroughTheEntireStreamSuccessfully() {
+
         val agendaRequest = CreateAgendaRequest(
             name = "Agenda 01",
             description = "some Description"
@@ -90,7 +105,7 @@ internal class AgendaControllerIntegrationTest : BaseTest() {
                 assert(it[0].endsAt.toLocalDateTime().second == expectedEndsAt.second)
             }
 
-        val voteRequest = ComputeVoteRequest(cpf = "12611324670", vote = VoteEnum.SIM)
+        val voteRequest = ComputeVoteRequest(cpf = validCpf, vote = VoteEnum.SIM)
         val voteJson = gson.toJson(voteRequest)
         mockMvc.perform(
             post("/v1/agenda/${agenda.id}/vote")
@@ -129,7 +144,7 @@ internal class AgendaControllerIntegrationTest : BaseTest() {
 
     @Test
     fun `should throw an exception when try create vote without agenda`() {
-        val voteRequest = ComputeVoteRequest(cpf = "12611324670", vote = VoteEnum.SIM)
+        val voteRequest = ComputeVoteRequest(cpf = validCpf, vote = VoteEnum.SIM)
         val voteJson = gson.toJson(voteRequest)
 
         val result = mockMvc.perform(
@@ -178,7 +193,7 @@ internal class AgendaControllerIntegrationTest : BaseTest() {
                 assert(it[0].description == agendaRequest.description)
             }.first()
 
-        val voteRequest = ComputeVoteRequest(cpf = "12611324670", vote = VoteEnum.SIM)
+        val voteRequest = ComputeVoteRequest(cpf = validCpf, vote = VoteEnum.SIM)
         val voteJson = gson.toJson(voteRequest)
 
         val result = mockMvc.perform(

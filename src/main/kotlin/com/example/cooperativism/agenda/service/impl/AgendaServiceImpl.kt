@@ -12,8 +12,10 @@ import com.example.cooperativism.agenda.repository.AgendaRepository
 import com.example.cooperativism.agenda.service.AgendaService
 import com.example.cooperativism.agenda.service.converters.toEntity
 import com.example.cooperativism.agenda.service.converters.toResponse
+import com.example.cooperativism.exceptions.BusinessException
 import com.example.cooperativism.exceptions.NotFoundException
 import com.example.cooperativism.session.service.SessionService
+import com.example.cooperativism.validcpf.ValidCpfResource
 import com.example.cooperativism.vote.service.ResultResponse
 import com.example.cooperativism.vote.service.VoteService
 import org.slf4j.Logger
@@ -25,7 +27,8 @@ import java.util.*
 class AgendaServiceImpl(
     private val agendaRepository: AgendaRepository,
     private val voteService: VoteService,
-    private val sessionService: SessionService
+    private val sessionService: SessionService,
+    private val validCpfResource: ValidCpfResource
 ) : AgendaService {
     companion object {
         private val log: Logger = LoggerFactory.getLogger(AgendaServiceImpl::class.java)
@@ -44,6 +47,15 @@ class AgendaServiceImpl(
     }
 
     override fun computeVote(agendaId: String, request: ComputeVoteRequest): ComputeVoteResponse {
+        log.info("[AGENDA] Validando cpf para realizar o voto")
+        validCpfResource.validCpf(request.cpf)
+            .let {
+                if (!it.isValid) throw BusinessException(
+                    CooperativismMessage.USER_IS_UNABLE_TO_VOTE,
+                    listOf(request.cpf)
+                )
+            }
+
         log.info("[AGENDA] Computando voto para pauta $agendaId Request $request")
 
         return getAgendaById(agendaId)

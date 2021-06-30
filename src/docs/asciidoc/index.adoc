@@ -69,3 +69,5 @@ include::{snippets}/agenda-controller-doc-test/doc-create-session/auto-section.a
 include::{snippets}/agenda-controller-doc-test/doc-create-vote/auto-section.adoc[]
 
 include::{snippets}/agenda-controller-doc-test/doc-get-result/auto-section.adoc[]
+
+include::{snippets}/user-controller-test/should-call-valid-cpf-resource-with-a-invalid-cpf/auto-section.adoc[]

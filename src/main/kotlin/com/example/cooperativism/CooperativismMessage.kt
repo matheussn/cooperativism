@@ -7,4 +7,5 @@ object CooperativismMessage {
     const val SESSION_HAS_ALREADY_ENDED = "session.has.already.ended"
     const val AGENDA_ALREADY_HAVE_A_SESSION = "agenda.already.have.a.session"
     const val USER_HAS_ALREADY_VOTED_FOR_THIS_AGENDA = "user.has.already.voted.for.this.agenda"
+    const val USER_IS_UNABLE_TO_VOTE = "user.is.unable.to.vote"
 }
